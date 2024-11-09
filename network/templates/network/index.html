@@ -1,5 +1,34 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+           <div id = "post-view">
+                
+        
+           </div>
+       
+
+           
+            <div id = "new-post-view">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">New Post</h3>
+                        <form id="new-post-form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <textarea class="form-control textarea-custom" id="new-post-content" placeholder="{{request.user.username}}, what's on your mind?" rows="4"></textarea>
+                            </div>
+                            <button class="btn btn-primary mt-2" type="submit">Post</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
+</div>
 {% endblock %}

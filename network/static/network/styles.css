@@ -57,3 +57,16 @@ a {
     padding: 10px 80px; /* Adjust the padding as needed */
     margin: 0 5px; /* Optional: Add margin between the nav items */
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#post-view, #following-view, #profile-view, #new-post-view {
+    width: 100%; /* Full width */
+    padding: 20px; /* Optional padding */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+

@@ -21,16 +21,21 @@
             <div class="collapse navbar-collapse d-flex" id="navbarNav">
                 <div class="d-flex flex-grow-1 justify-content-center"> <!-- Centering container -->
                     <ul class="navbar-nav d-flex justify-content-center" style="width: 100%;">
-                        <li class="nav-item active mx-4"> 
-                            <a class="nav-link" href="{% url 'index' %}">All Posts</a>
+                        <li class="nav-item active "> 
+                            <a class="nav-link" href="#" id="allPosts">All Posts</a>
                         </li>
                         {% if user.is_authenticated %}
                             <li class="nav-item"> 
-                                <a class="nav-link" href="#">Following</a>
+                                <a class="nav-link" href="#" id="following">Following</a>
+                            </li>
+
+                            <li class="nav-item"> 
+                                <a class="nav-link" href="#" id="newPost">New Post</a>
                             </li>
         
+        
                             <li class="nav-item"> 
-                                <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                                <a class="nav-link" href="#" id="profile"><strong>{{ user.username }}</strong></a>
                             </li>
                         {% endif %}
                     </ul>
