@@ -1,0 +1,59 @@
+.navbar {
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar-brand {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: green;
+
+}
+
+a {
+    color: green;
+
+}
+
+
+
+.navbar-nav {
+    display: flex; /* Use flexbox for layout */
+    justify-content: flex-start; /* Align items to the start */
+    
+}
+
+.navbar-nav .nav-item {
+    margin: 0 5px; /* Add a small horizontal margin for spacing */
+}
+
+.navbar-nav .nav-link {
+    color: #28a745; /* Green text for non-active links */
+    padding: 10px 20px; /* Add padding to the nav links */
+    background-color: transparent; /* No background color by default */
+    border-radius: 5px; /* Rounded corners */
+    text-align: center; /* Center text */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    flex: 1; /* Allow the link to grow and fill the space */
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    background-color: #28a745; /* Green background for active tab */
+    color: white; /* White text for active tab */
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    background-color: #e2e6ea; /* Light gray on hover */
+    color: #28a745; /* Green text on hover */
+}
+
+/* Prevent hover effect on active tab */
+.navbar-nav .nav-item.active .nav-link:hover {
+    background-color: #28a745; /* Keep active tab's background color */
+    color: white; /* Keep active tab's text color */
+}
+
+
+.navbar-nav .nav-item .nav-link {
+    padding: 10px 80px; /* Adjust the padding as needed */
+    margin: 0 5px; /* Optional: Add margin between the nav items */
+}
