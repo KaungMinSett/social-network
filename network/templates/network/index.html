@@ -5,6 +5,7 @@
     <div class="row">
         <div class="col-12">
            <div id = "post-view">
+            
                 
         
            </div>
@@ -15,10 +16,11 @@
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">New Post</h3>
-                        <form id="new-post-form">
+                        <form id="new-post-form" action="{% url 'create_post' %}" method="post" >
                             {% csrf_token %}
                             <div class="form-group">
-                                <textarea class="form-control textarea-custom" id="new-post-content" placeholder="{{request.user.username}}, what's on your mind?" rows="4"></textarea>
+                                <textarea class="form-control textarea-custom" name="content" id="new-post-content" 
+                                placeholder="{{request.user.username}}, what's on your mind?" rows="4" required></textarea>
                             </div>
                             <button class="btn btn-primary mt-2" type="submit">Post</button>
                         </form>

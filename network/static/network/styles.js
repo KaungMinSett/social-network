@@ -31,9 +31,32 @@
 
         document.querySelector('#post-view').innerHTML = `<h3>${postType.charAt(0).toUpperCase() + postType.slice(1)}</h3>`;
 
-
-
+        //fetch posts
+        fetch(`/posts/${postType}`)
+        .then(response => response.json())
+        .then(posts => {
+            console.log(posts);
+            posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.innerHTML = `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">${post.user}</h5>
+                            <p class="card-text">${post.content}</p>
+                            <p class="card-text"><small class="text-muted">${post.timestamp}</small></p>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('#post-view').appendChild(postElement);
+            }
+            );
+        }
+        );
     }
+
+
+
+
 
     function compose_post() {
         // Hide all posts
