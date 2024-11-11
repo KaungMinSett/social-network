@@ -4,23 +4,45 @@
 <div class="container">
     <div class="row">
         <div class="col-12">
-           <div id = "post-view">
-            
-                
-        
-           </div>
-       
-
            
-            <div id = "new-post-view">
+
+            <div id="profile-view">
+                <div class="profile-info">
+                    <h2>Profile</h2>
+                    <div class="user-info">
+                        <span class="username">Username</span>
+                    </div>
+                    <div class="user-action">
+                        <button id="follow-button" onclick="toggleFollow()">Follow</button>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <strong>Followers:</strong> <span id="follower-count">150</span>
+                        </div>
+                        <div class="stat">
+                            <strong>Following:</strong> <span id="following-count">75</span>
+                        </div>
+                        <div class="stat">
+                            <strong>Posts:</strong> <span id="post-count">30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+
+
+            <div id="new-post-view">
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">New Post</h3>
-                        <form id="new-post-form" action="{% url 'create_post' %}" method="post" >
+                        <form id="new-post-form" action="{% url 'create_post' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
-                                <textarea class="form-control textarea-custom" name="content" id="new-post-content" 
-                                placeholder="{{request.user.username}}, what's on your mind?" rows="4" required></textarea>
+                                <textarea class="form-control textarea-custom" name="content" id="new-post-content"
+                                    placeholder="{{request.user.username}}, what's on your mind?" rows="4"
+                                    required></textarea>
                             </div>
                             <button class="btn btn-primary mt-2" type="submit">Post</button>
                         </form>
@@ -28,7 +50,13 @@
                 </div>
 
             </div>
-            
+
+            <div id="post-view">
+
+
+
+            </div>
+
 
         </div>
     </div>

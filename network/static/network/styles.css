@@ -70,3 +70,46 @@ body {
     box-sizing: border-box; /* Include padding in width calculation */
 }
 
+
+.profile-info {
+    padding: 20px;
+
+    text-align: center;
+}
+
+.user-info {
+    margin-bottom: 10px;
+}
+
+.username {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.user-action {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.stat {
+    flex: 1;
+    text-align: center;
+}
