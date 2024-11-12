@@ -19,10 +19,10 @@
             </button>
         
             <div class="collapse navbar-collapse d-flex" id="navbarNav">
-                <div class="d-flex flex-grow-1 justify-content-center"> <!-- Centering container -->
+                <div class="d-flex flex-grow-1 justify-content-start"> <!-- Centering container -->
                     <ul class="navbar-nav d-flex justify-content-center" style="width: 100%;">
                         <li class="nav-item active "> 
-                            <a class="nav-link" href="#" id="allPosts">All Posts</a>
+                            <a class="nav-link" href="{% url 'index' %}" id="allPosts">All Posts</a>
                         </li>
                         {% if user.is_authenticated %}
                             <li class="nav-item"> 

@@ -1,6 +1,9 @@
 {% extends "network/layout.html" %}
 
+{% load static %}
+
 {% block body %}
+<script src="{% static 'network/posts.js' %}"></script>
 <div class="container">
     <div class="row">
         <div class="col-12">
@@ -10,7 +13,7 @@
                 <div class="profile-info">
                     <h2>Profile</h2>
                     <div class="user-info">
-                        <span class="username">Username</span>
+                        <span class="username">{{request.user.username}}</span>
                     </div>
                     <div class="user-action">
                         <button id="follow-button" onclick="toggleFollow()">Follow</button>
@@ -34,17 +37,17 @@
 
 
             <div id="new-post-view">
-                <div class="card">
+                <div class="card mb-4 shadow-sm" style="border-radius: 15px;">
                     <div class="card-body">
-                        <h3 class="card-title">New Post</h3>
+                        <h3 class="card-title text-center mb-3">Create a New Post</h3>
                         <form id="new-post-form" action="{% url 'create_post' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
                                 <textarea class="form-control textarea-custom" name="content" id="new-post-content"
-                                    placeholder="{{request.user.username}}, what's on your mind?" rows="4"
-                                    required></textarea>
+                                    placeholder="{{ request.user.username }}, what's on your mind?" rows="15" required
+                                    style="border-radius: 10px; resize: none;"></textarea>
                             </div>
-                            <button class="btn btn-primary mt-2" type="submit">Post</button>
+                            <button class="btn btn-success btn-block mt-3" type="submit" style="border-radius: 10px;">Post</button>
                         </form>
                     </div>
                 </div>
@@ -61,4 +64,6 @@
         </div>
     </div>
 </div>
+
+
 {% endblock %}
