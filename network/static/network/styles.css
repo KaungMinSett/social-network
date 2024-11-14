@@ -10,9 +10,17 @@
 }
 
 a {
-    color: green;
+    color: #28a745;
+
 
 }
+
+a:hover {
+    color: #218838;
+    text-decoration: none;
+}
+
+
 
 
 
@@ -115,12 +123,3 @@ button:hover {
 }
 
 
-.btn-primary {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}

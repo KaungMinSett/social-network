@@ -89,3 +89,17 @@ def posts(request, postType):
     
     posts = posts.order_by("-timestamp").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
+
+
+def get_profile(request, username):
+    user = User.objects.get(username=username)
+    posts = user.posts.all().order_by("-timestamp")
+
+    return JsonResponse({
+        "username": user.username,
+        "followers": user.followers_count,
+        "following": user.following_count,
+        "posts_num": user.posts.count(),
+        "posts": [post.serialize() for post in posts]
+    })  
+
