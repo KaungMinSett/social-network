@@ -109,7 +109,7 @@ button {
 }
 
 button:hover {
-    background-color: #28a745;
+    background-color:  #218838;
 }
 
 .stats {
@@ -123,3 +123,11 @@ button:hover {
 }
 
 
+#follow-button {
+    border: none;
+    transition: background-color 0.5s ease;
+}
+
+#follow-button:focus {
+    outline: none;
+}

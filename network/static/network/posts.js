@@ -5,13 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Use buttons to toggle between views
 
-
+  
     const allPostsButton = document.querySelector('#allPosts');
     const followingButton = document.querySelector('#following');
     const profileButton = document.querySelector('#profile');
     const newPostButton = document.querySelector('#newPost');
 
-    // Check if the buttons exist before adding event listeners
+    // Chceck if the buttons exist in case the user is not logged in
     if (allPostsButton) {
         allPostsButton.addEventListener('click', () => load_post('posts'));
     }
@@ -37,7 +37,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   
 
-   
+    document.querySelectorAll('.profile-link').forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default anchor behavior
+            const username = this.dataset.username; // Get the username from the data attribute
+            load_profile(username); // Load the profile
+        });
+    });
+
 
 
 
@@ -58,12 +65,18 @@ function load_profile(username) {
             const profileView = document.querySelector('#profile-view');
             profileView.innerHTML = `
                             <div class="profile-info">
-                                <h2>${data.username}'s Profile</h2>
+                               
                                 <div class="user-info">
                                     <span class="username">${data.username}</span>
                                 </div>
+                                
                                 <div class="user-action">
-                                    <button id="follow-button" onclick="toggleFollow()">Follow</button>
+                                
+                                    ${data.is_current_user ? '' : `
+                                    <button id="follow-button" data-username="${data.username}" onclick="toggleFollow()">
+                                    ${data.is_following ? 'Unfollow' : 'Follow'}
+                                    </button>
+                                 `}
                                 </div>
                                  <div class="stats">
                                      <div class="stat">
@@ -78,6 +91,13 @@ function load_profile(username) {
                                  </div>
                              </div>
                 `;
+                var currentUsername = "{{ request.user.username }}";
+                if(currentUsername === data.username) {
+                    document.querySelector('#follow-button').style.display = 'none';
+                }
+                if(data.is_following) {
+                    document.querySelector('#follow-button').style.backgroundColor = 'red';
+                }
                  // Display posts
                  data.posts.forEach(post => {
                     const postElement = document.createElement('div');
@@ -138,13 +158,6 @@ function load_post(postType) {
             );
         }
         );
-        document.querySelectorAll('.profile-link').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent the default anchor behavior
-                const username = this.dataset.username; // Get the username from the data attribute
-                load_profile(username); // Load the profile
-            });
-        });
     
 }
 
@@ -161,3 +174,27 @@ function compose_post() {
 
 }
 
+function toggleFollow () {
+    const followButton = document.querySelector('#follow-button');
+    const followerCount = document.querySelector('#follower-count');
+
+    const username = followButton.dataset.username;
+
+    fetch(`/follow/${username}`)
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            if(data.is_following) {
+                followButton.textContent = 'Unfollow';
+                followButton.style.backgroundColor = 'red';
+                followerCount.textContent = parseInt(followerCount.textContent) + 1;
+            } else {
+                followButton.textContent = 'Follow';
+                followButton.style.backgroundColor = '';
+                followerCount.textContent = parseInt(followerCount.textContent) - 1;
+            }
+
+
+        }
+    })
+}

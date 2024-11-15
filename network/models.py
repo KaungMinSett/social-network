@@ -19,6 +19,8 @@ class User(AbstractUser):
         ).delete()
     
 
+    def is_following(self, user):
+        return self.following_relationships.filter(following=user).exists()
     
     @property
     def followers_count(self):

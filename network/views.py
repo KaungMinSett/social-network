@@ -94,12 +94,30 @@ def posts(request, postType):
 def get_profile(request, username):
     user = User.objects.get(username=username)
     posts = user.posts.all().order_by("-timestamp")
+    is_current_user = user == request.user  
 
     return JsonResponse({
         "username": user.username,
         "followers": user.followers_count,
         "following": user.following_count,
         "posts_num": user.posts.count(),
+        "is_current_user": is_current_user,
+        "is_following": request.user.is_following(user),
         "posts": [post.serialize() for post in posts]
     })  
+
+def follow(request, username):
+    user = User.objects.get(username=username)
+
+    if request.user.is_following(user):
+        request.user.unfollow(user)
+    else:
+        request.user.follow(user)
+    
+    return JsonResponse({
+            'status': 'success',
+            'is_following': request.user.is_following(user),
+            'follower_count': user.followers_count
+        })
+    
 
