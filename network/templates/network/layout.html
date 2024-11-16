@@ -1,6 +1,6 @@
 {% load static %}
 
-<!DOCTYPE html>
+
 <html lang="en">
     <head>
         <title>{% block title %}Social Network{% endblock %}</title>
@@ -33,7 +33,7 @@
                             </li>
         
                             <li class="nav-item {% if request.path == '/profile' %}active{% endif %}"> 
-                                <a class="nav-link" href="#" id="profile" data-username ="{{ request.user.username }}" data-page="profile"><strong> {{ request.user.username }}</strong></a>
+                                <a class="nav-link" href="#" id="profile" data-userID ="{{ request.user.id }}" data-page="profile"><strong> {{ request.user.username }}</strong></a>
                             </li>
                         {% endif %}
                     </ul>

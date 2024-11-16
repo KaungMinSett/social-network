@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Use buttons to toggle between views
 
-  
+
     const allPostsButton = document.querySelector('#allPosts');
     const followingButton = document.querySelector('#following');
     const profileButton = document.querySelector('#profile');
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (profileButton) {
         profileButton.addEventListener('click', function () {
-            const username = this.dataset.username;
-            load_profile(username);
+            const userID = this.dataset.userid;
+            load_profile(userID);
 
         });
     }
@@ -35,22 +35,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     load_post('posts');
 
-  
 
-    document.querySelectorAll('.profile-link').forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the default anchor behavior
-            const username = this.dataset.username; // Get the username from the data attribute
-            load_profile(username); // Load the profile
-        });
-    });
+
+
 
 
 
 
 });
 
-function load_profile(username) {
+function load_profile(userID) {
     document.querySelector('#new-post-view').style.display = 'none';
     document.querySelector('#post-view').style.display = 'block';
     document.querySelector('#profile-view').style.display = 'block';
@@ -59,7 +53,7 @@ function load_profile(username) {
 
 
     //fetch posts
-    fetch(`/users/${username}`)
+    fetch(`/users/${userID}`)
         .then(response => response.json())
         .then(data => {
             const profileView = document.querySelector('#profile-view');
@@ -73,7 +67,7 @@ function load_profile(username) {
                                 <div class="user-action">
                                 
                                     ${data.is_current_user ? '' : `
-                                    <button id="follow-button" data-username= ${data.username} onclick="toggleFollow()">
+                                    <button id="follow-button" data-userid= ${data.user_id} onclick="toggleFollow()">
                                     ${data.is_following ? 'Unfollow' : 'Follow'}
                                     </button>
                                  `}
@@ -91,17 +85,17 @@ function load_profile(username) {
                                  </div>
                              </div>
                 `;
-                var currentUsername = "{{ request.user.username }}";
-                if(currentUsername === data.username) {
-                    document.querySelector('#follow-button').style.display = 'none';
-                }
-                if(data.is_following) {
-                    document.querySelector('#follow-button').style.backgroundColor = 'red';
-                }
-                 // Display posts
-                 data.posts.forEach(post => {
-                    const postElement = document.createElement('div');
-                    postElement.innerHTML = `
+            var currentUsername = "{{ request.user.username }}";
+            if (currentUsername === data.username) {
+                document.querySelector('#follow-button').style.display = 'none';
+            }
+            if (data.is_following) {
+                document.querySelector('#follow-button').style.backgroundColor = 'red';
+            }
+            // Display posts
+            data.posts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.innerHTML = `
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">
@@ -112,14 +106,14 @@ function load_profile(username) {
                             </div>
                         </div>
                     `;
-                    document.querySelector('#post-view').appendChild(postElement);
-                });
+                document.querySelector('#post-view').appendChild(postElement);
+            });
 
         }
         );
 }
 
-function load_post(postType) {
+function load_post(postType, page = 1) {
     document.querySelector('#new-post-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#post-view').style.display = 'block';
@@ -127,14 +121,24 @@ function load_post(postType) {
     document.querySelector('#post-view').innerHTML = `<h3>${postType.charAt(0).toUpperCase() + postType.slice(1)}</h3>`;
 
     //fetch posts
-    fetch(`/posts/${postType}`)
+    fetch(`/posts/${postType}?page=${page}`)
         .then(response => response.json())
-        .then(posts => {
-            console.log(posts);
+        .then(data => {
+            console.log(data);
+            const posts = data.posts;
+            const totalPages = data.total_pages;
+            const currentPage = data.current_page;
+            const pagination = setUpPagination(currentPage, totalPages, postType);
+
+
+
+
+            // Display posts
             posts.forEach(post => {
                 const postElement = document.createElement('div');
+
                 // Escape the username properly
-                const safeUsername = encodeURIComponent(post.user);
+                
                 postElement.innerHTML = `
                     <div class="card mb-3">
                         <div class="card-body">
@@ -142,8 +146,8 @@ function load_post(postType) {
                             <div class="username-link" 
                                  role="button" 
                                 
-                                 data-username="${safeUsername}"
-                                 onclick="load_profile(decodeURIComponent(this.dataset.username))">
+                                 data-userid="${post.user_id}"
+                                 onclick="load_profile(${post.user_id})">
                                 <h5 class="card-title">${post.user}</h5>
                             </div>
                            </a> 
@@ -152,13 +156,59 @@ function load_post(postType) {
                         </div>
                     </div>
                 `;
-                
+
+
                 document.querySelector('#post-view').appendChild(postElement);
+
             }
             );
+             document.querySelector('#post-view').appendChild(pagination);
         }
         );
+
+}
+
+function setUpPagination(currentPage, totalPages, postType) {
+    const pagination = document.createElement('div');
+    pagination.className = 'pagination';
+
+     
     
+    // Generate page buttons based on total pages
+    let pagesHTML = '';
+    for(let i = 1; i <= totalPages; i++) {
+        pagesHTML += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="load_post('${postType}', ${i})">${i}</a>
+            </li>`;
+    }
+
+    pagination.innerHTML = `      
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" 
+                       onclick="load_post('${postType}', ${currentPage - 1})" 
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                ${pagesHTML}
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" 
+                       onclick="load_post('${postType}', ${currentPage + 1})" 
+                       aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>`;
+
+
+    return pagination;
+                       
+ 
+
 }
 
 
@@ -178,9 +228,9 @@ function toggleFollow () {
     const followButton = document.querySelector('#follow-button');
     const followerCount = document.querySelector('#follower-count');
 
-    const username = followButton.dataset.username;
+    const userID = followButton.dataset.userid;
 
-    fetch(`/follow/${username}`)
+    fetch(`/follow/${ userID }`)
     .then(response => response.json())
     .then(data => {
         if(data.status === 'success') {

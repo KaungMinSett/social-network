@@ -131,3 +131,19 @@ button:hover {
 #follow-button:focus {
     outline: none;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+
+}
+
+.page-link {
+    color:#28a745
+
+}
+
+.page-link:hover {
+    color: #218838;
+}

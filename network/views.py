@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-
+from django.core.paginator import Paginator
 
 from .models import User, Post
 
@@ -92,15 +92,30 @@ def posts(request, postType):
         return JsonResponse({"error": "Invalid request."}, status=400)
     
     posts = posts.order_by("-timestamp").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    paginator = Paginator(posts, 10)
+    page_num = request.GET.get('page', 1)
+    page = paginator.get_page(page_num)
+     # Serialize the posts for current page
+    serialized_posts = [post.serialize() for post in page]
+
+    
+
+    data = {
+        'posts': serialized_posts,
+        'total_pages': paginator.num_pages,
+        'current_page': page.number
+    }
+
+    return JsonResponse(data)
 
 
-def get_profile(request, username):
-    user = User.objects.get(username=username)
+def get_profile(request, userID):
+    user = User.objects.get(id = userID)
     posts = user.posts.all().order_by("-timestamp")
     is_current_user = user == request.user  
 
     return JsonResponse({
+        "user_id": user.id,
         "username": user.username,
         "followers": user.followers_count,
         "following": user.following_count,
@@ -110,8 +125,9 @@ def get_profile(request, username):
         "posts": [post.serialize() for post in posts]
     })  
 
-def follow(request, username):
-    user = User.objects.get(username=username)
+def follow(request, userID):
+
+    user = User.objects.get(id=userID)
 
     if request.user.is_following(user):
         request.user.unfollow(user)
