@@ -80,6 +80,10 @@ def create_post(request):
 def posts(request, postType):
     if postType == "posts":
         posts = Post.objects.all()
+    elif postType == "following":
+        posts = Post.objects.filter(
+            user__followers_relationships__follower=request.user
+            )
     elif postType == "profile":
         posts = Post.objects.filter(
             user=request.user

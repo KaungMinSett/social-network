@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (followingButton) {
-        followingButton.addEventListener('click', () => load_post(''));
+        followingButton.addEventListener('click', () => load_post('following'));
     }
 
     if (profileButton) {
@@ -73,7 +73,7 @@ function load_profile(username) {
                                 <div class="user-action">
                                 
                                     ${data.is_current_user ? '' : `
-                                    <button id="follow-button" data-username="${data.username}" onclick="toggleFollow()">
+                                    <button id="follow-button" data-username= ${data.username} onclick="toggleFollow()">
                                     ${data.is_following ? 'Unfollow' : 'Follow'}
                                     </button>
                                  `}
