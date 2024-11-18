@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Use buttons to toggle between views
 
-
+    current_user = document.querySelector('#profile').dataset.userid;
+    console.log(current_user);
     const allPostsButton = document.querySelector('#allPosts');
     const followingButton = document.querySelector('#following');
     const profileButton = document.querySelector('#profile');
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
         newPostButton.addEventListener('click', compose_post);
     }
 
-
+    // By default, load all posts
     load_post('posts');
 
 
@@ -82,13 +83,11 @@ function load_profile(userID) {
                                     <div class="stat">
                                         <strong>Posts:</strong> <span id="post-count">${data.posts_num}</span>
                                     </div>
+
                                  </div>
                              </div>
                 `;
-            var currentUsername = "{{ request.user.username }}";
-            if (currentUsername === data.username) {
-                document.querySelector('#follow-button').style.display = 'none';
-            }
+         
             if (data.is_following) {
                 document.querySelector('#follow-button').style.backgroundColor = 'red';
             }
@@ -102,7 +101,10 @@ function load_profile(userID) {
                                     <a href="#" class="">${post.user}</a>
                                 </h5>
                                 <p class="card-text">${post.content}</p>
+                            
                                 <p class="card-text"><small class="text-muted">${post.timestamp}</small></p>
+                               
+                                ${data.is_current_user ? `<button id="edit-button" data-postid=${post.id} onclick="edit_post()"> Edit</button>`: ''}
                             </div>
                         </div>
                     `;
@@ -136,8 +138,11 @@ function load_post(postType, page = 1) {
             // Display posts
             posts.forEach(post => {
                 const postElement = document.createElement('div');
+                
+                const showEditButton = Number(post.user_id) === Number(current_user);
 
-                // Escape the username properly
+
+
                 
                 postElement.innerHTML = `
                     <div class="card mb-3">
@@ -153,6 +158,10 @@ function load_post(postType, page = 1) {
                            </a> 
                             <p class="card-text">${post.content}</p>
                             <p class="card-text"><small class="text-muted">${post.timestamp}</small></p>
+                           
+                        
+                            ${showEditButton? `<button id="edit-button" data-postid=${post.id} onclick="edit_post()"> Edit</button>`: ''}
+                            
                         </div>
                     </div>
                 `;
@@ -224,6 +233,8 @@ function compose_post() {
 
 }
 
+
+
 function toggleFollow () {
     const followButton = document.querySelector('#follow-button');
     const followerCount = document.querySelector('#follower-count');
@@ -247,4 +258,8 @@ function toggleFollow () {
 
         }
     })
+}
+
+function edit_post() { 
+    
 }

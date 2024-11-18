@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import User, Post
 
@@ -64,6 +66,7 @@ def register(request):
         return render(request, "network/register.html")
     
 
+
 def create_post(request):
     if request.method == "POST":
         content = request.POST["content"]
@@ -97,6 +100,7 @@ def posts(request, postType):
     page = paginator.get_page(page_num)
      # Serialize the posts for current page
     serialized_posts = [post.serialize() for post in page]
+    
 
     
 
@@ -125,6 +129,7 @@ def get_profile(request, userID):
         "posts": [post.serialize() for post in posts]
     })  
 
+
 def follow(request, userID):
 
     user = User.objects.get(id=userID)
@@ -141,3 +146,13 @@ def follow(request, userID):
         })
     
 
+
+def edit_post(request, postID):
+    post = Post.objects.get(id=postID)
+    if request.method == "PUT":
+        content = request.POST["content"]
+        post.content = content
+        post.save()
+        return JsonResponse(post.serialize())
+    else:
+        return JsonResponse({"error": "Invalid request."}, status=400)
