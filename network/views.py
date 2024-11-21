@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 from .models import User, Post
@@ -147,12 +148,16 @@ def follow(request, userID):
     
 
 
+@csrf_exempt
 def edit_post(request, postID):
-    post = Post.objects.get(id=postID)
-    if request.method == "PUT":
-        content = request.POST["content"]
+    try:
+        post = Post.objects.get(id=postID)
+        data = json.loads(request.body)  # Parse the JSON body
+        content = data["content"]
         post.content = content
         post.save()
-        return JsonResponse(post.serialize())
-    else:
-        return JsonResponse({"error": "Invalid request."}, status=400)
+        return JsonResponse({"message": "Post updated successfully.", "updated_content": content}, status=201)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+
+  

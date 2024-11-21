@@ -156,11 +156,11 @@ function load_post(postType, page = 1) {
                                 <h5 class="card-title">${post.user}</h5>
                             </div>
                            </a> 
-                            <p class="card-text">${post.content}</p>
+                            <p id="content" class="card-text">${post.content}</p>
                             <p class="card-text"><small class="text-muted">${post.timestamp}</small></p>
                            
                         
-                            ${showEditButton? `<button id="edit-button" data-postid=${post.id} onclick="edit_post()"> Edit</button>`: ''}
+                            ${showEditButton? `<button id="edit-button" data-postid=${post.id} onclick="edit_post(${post.id})"> Edit</button>`: ''}
                             
                         </div>
                     </div>
@@ -260,6 +260,54 @@ function toggleFollow () {
     })
 }
 
-function edit_post() { 
+function edit_post(postId) { 
+
     
+    const postElement = document.querySelector(`[data-postid="${postId}"]`).closest('.card-body');
+    const content = postElement.querySelector('#content');
+    const originalContent = content.textContent;
+
+    // Replace the content with a textarea for editing
+    content.innerHTML = `
+        <textarea class="form-control textarea-custom" name="content" id="edit-content-${postId}"
+                  placeholder=" " rows="3" required
+                  style="border-radius: 10px; resize: none;"></textarea>`;
+    
+    // Set the original content in the textarea
+    postElement.querySelector(`#edit-content-${postId}`).value = originalContent;
+    postElement.querySelector(`#edit-content-${postId}`).focus();
+
+    //change edit button to save
+    const editButton = postElement.querySelector('#edit-button');
+    editButton.textContent = 'Save';
+    editButton.onclick = function() {
+        save_post(postId);
+
+    };
+
+
 }
+
+function save_post(postId) {
+    const content = document.querySelector(`#edit-content-${postId}`).value;
+
+    fetch(`/edit_post/${postId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+            content: content
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.updated_content);
+        const postElement = document.querySelector(`[data-postid="${postId}"]`).closest('.card-body');
+        postElement.querySelector('#content').textContent = data.updated_content;
+        postElement.querySelector('#edit-button').textContent = 'Edit';
+        postElement.querySelector('#edit-button').onclick = function() {
+            edit_post(postId);
+        };
+
+      
+    });
+}
+
