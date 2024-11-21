@@ -150,14 +150,17 @@ def follow(request, userID):
 
 @csrf_exempt
 def edit_post(request, postID):
-    try:
-        post = Post.objects.get(id=postID)
-        data = json.loads(request.body)  # Parse the JSON body
-        content = data["content"]
-        post.content = content
-        post.save()
-        return JsonResponse({"message": "Post updated successfully.", "updated_content": content}, status=201)
-    except Post.DoesNotExist:
-        return JsonResponse({"error": "Post not found."}, status=404)
+    if Post.objects.filter(id=postID, user=request.user).exists():
+        try:
+            post = Post.objects.get(id=postID)
+            data = json.loads(request.body)  # Parse the JSON body
+            content = data["content"]
+            post.content = content
+            post.save()
+            return JsonResponse({"message": "Post updated successfully.", "updated_content": content}, status=201)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404)
+    else:
+        return JsonResponse({"error": "You are not authorized to edit this post."}, status=403)
 
   

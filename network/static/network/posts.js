@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Use buttons to toggle between views
 
     current_user = document.querySelector('#profile').dataset.userid;
-    console.log(current_user);
+    // console.log(current_user);
     const allPostsButton = document.querySelector('#allPosts');
     const followingButton = document.querySelector('#following');
     const profileButton = document.querySelector('#profile');
@@ -264,27 +264,31 @@ function edit_post(postId) {
 
     
     const postElement = document.querySelector(`[data-postid="${postId}"]`).closest('.card-body');
+    const showEditButton = Number(postElement.dataset.userid) === Number(current_user);
     const content = postElement.querySelector('#content');
     const originalContent = content.textContent;
+       // Check if the edit button is shown
+       if (showEditButton) {
+        // Replace the content with a textarea for editing
+        content.innerHTML = `
+            <textarea class="form-control textarea-custom" name="content" id="edit-content-${postId}"
+                      placeholder=" " rows="3" required
+                      style="border-radius: 10px; resize: none;"></textarea>`;
 
-    // Replace the content with a textarea for editing
-    content.innerHTML = `
-        <textarea class="form-control textarea-custom" name="content" id="edit-content-${postId}"
-                  placeholder=" " rows="3" required
-                  style="border-radius: 10px; resize: none;"></textarea>`;
-    
-    // Set the original content in the textarea
-    postElement.querySelector(`#edit-content-${postId}`).value = originalContent;
-    postElement.querySelector(`#edit-content-${postId}`).focus();
+        // Set the original content in the textarea
+        postElement.querySelector(`#edit-content-${postId}`).value = originalContent;
+        postElement.querySelector(`#edit-content-${postId}`).focus();
 
-    //change edit button to save
-    const editButton = postElement.querySelector('#edit-button');
-    editButton.textContent = 'Save';
-    editButton.onclick = function() {
-        save_post(postId);
-
-    };
-
+        // Change edit button to save
+        const editButton = postElement.querySelector(`#edit-button-${postId}`);
+        editButton.textContent = 'Save';
+        editButton.onclick = function() {
+            save_post(postId);
+        };
+    } else {
+        // Show an alert if the edit button should not be shown
+        alert('You do not have permission to edit this post.');
+    }
 
 }
 
@@ -308,6 +312,10 @@ function save_post(postId) {
         };
 
       
+    })
+    .catch(error => {
+        console.error('Error:', error);
+
     });
 }
 
