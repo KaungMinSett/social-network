@@ -152,3 +152,9 @@ button:hover {
     background-color: #28a745;
     border-color: #28a745;
 }
+
+.post-button {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}

@@ -158,9 +158,14 @@ function load_post(postType, page = 1) {
                            </a> 
                             <p id="content" class="card-text">${post.content}</p>
                             <p class="card-text"><small class="text-muted">${post.timestamp}</small></p>
-                           
-                        
-                            ${showEditButton? `<button id="edit-button" data-postid=${post.id} onclick="edit_post(${post.id})"> Edit</button>`: ''}
+                            <div class = "post-button">
+                            <div>
+                                <button id="like-button" data-postid=${post.id} onclick="like_post(${post.id})"> <i class="bi bi-heart"></i></button>
+                              
+                                <span id="like-count-${post.id}">${post.likes}</span>
+                            </div>
+                                ${showEditButton? `<button id="edit-button-${post.id}" data-postid=${post.id} onclick="edit_post(${post.id})"> Edit</button>`: ''}
+                            </div>
                             
                         </div>
                     </div>
@@ -264,12 +269,19 @@ function edit_post(postId) {
 
     
     const postElement = document.querySelector(`[data-postid="${postId}"]`).closest('.card-body');
-    const showEditButton = Number(postElement.dataset.userid) === Number(current_user);
+    const userID = postElement.querySelector('.username-link').dataset.userid;
+    console.log(userID);
+    
+    const showEditButton = Number(userID) === Number(current_user);
+
+
+    console.log(current_user);
+    console.log(showEditButton);
     const content = postElement.querySelector('#content');
     const originalContent = content.textContent;
        // Check if the edit button is shown
        if (showEditButton) {
-        // Replace the content with a textarea for editing
+        //  textarea for editing
         content.innerHTML = `
             <textarea class="form-control textarea-custom" name="content" id="edit-content-${postId}"
                       placeholder=" " rows="3" required
@@ -306,8 +318,8 @@ function save_post(postId) {
         console.log(data.updated_content);
         const postElement = document.querySelector(`[data-postid="${postId}"]`).closest('.card-body');
         postElement.querySelector('#content').textContent = data.updated_content;
-        postElement.querySelector('#edit-button').textContent = 'Edit';
-        postElement.querySelector('#edit-button').onclick = function() {
+        postElement.querySelector(`#edit-button-${postId}`).textContent = 'Edit';
+        postElement.querySelector(`#edit-button-${postId}`).onclick = function() {
             edit_post(postId);
         };
 
