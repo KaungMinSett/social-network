@@ -1,16 +1,20 @@
+let isLoggedIn = false
 
 document.addEventListener('DOMContentLoaded', function () {
 
 
 
     // Use buttons to toggle between views
-
-    current_user = document.querySelector('#profile').dataset.userid;
-    // console.log(current_user);
     const allPostsButton = document.querySelector('#allPosts');
     const followingButton = document.querySelector('#following');
     const profileButton = document.querySelector('#profile');
     const newPostButton = document.querySelector('#newPost');
+
+    if (profileButton) {
+        current_user = document.querySelector('#profile').dataset.userid;
+        isLoggedIn = true;
+
+    }
 
     // Chceck if the buttons exist in case the user is not logged in
     if (allPostsButton) {
@@ -35,12 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // By default, load all posts
     load_post('posts');
-
-
-
-
-
-
 
 
 });
@@ -120,6 +118,7 @@ function load_post(postType, page = 1) {
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#post-view').style.display = 'block';
 
+
     document.querySelector('#post-view').innerHTML = `<h3>${postType.charAt(0).toUpperCase() + postType.slice(1)}</h3>`;
 
     //fetch posts
@@ -138,8 +137,14 @@ function load_post(postType, page = 1) {
             // Display posts
             posts.forEach(post => {
                 const postElement = document.createElement('div');
+                let showEditButton = false;
+
+
+                if(isLoggedIn) {
+
+                    showEditButton = Number(post.user_id) === Number(current_user);
+                }
                 
-                const showEditButton = Number(post.user_id) === Number(current_user);
 
 
 
@@ -160,9 +165,17 @@ function load_post(postType, page = 1) {
                             <p class="card-text"><small class="text-muted">${post.timestamp}</small></p>
                             <div class = "post-button">
                             <div>
-                                <button id="like-button" data-postid=${post.id} onclick="like_post(${post.id})"> <i class="bi bi-heart"></i></button>
+                             ${isLoggedIn ? `
+                                <button id="like-button" data-postid=${post.id} onclick="toggleLike(${post.id}) ">
+                           
+
+                                ${post.is_liked ? '<i class="bi bi-hand-thumbs-up-fill"></i>' : '<i class="bi bi-hand-thumbs-up"></i>'}
+
+                                 
+                                 </button>
                               
-                                <span id="like-count-${post.id}">${post.likes}</span>
+                                <span id="like-count-${post.id}">${post.likes}</span>`
+                                : ''}
                             </div>
                                 ${showEditButton? `<button id="edit-button-${post.id}" data-postid=${post.id} onclick="edit_post(${post.id})"> Edit</button>`: ''}
                             </div>
@@ -275,11 +288,11 @@ function edit_post(postId) {
     const showEditButton = Number(userID) === Number(current_user);
 
 
-    console.log(current_user);
-    console.log(showEditButton);
+    // console.log(current_user);
+    // console.log(showEditButton);
     const content = postElement.querySelector('#content');
     const originalContent = content.textContent;
-       // Check if the edit button is shown
+       // Check if the edit button is really shown
        if (showEditButton) {
         //  textarea for editing
         content.innerHTML = `
@@ -331,3 +344,22 @@ function save_post(postId) {
     });
 }
 
+function toggleLike(postId) {
+    const likeButton = document.querySelector(`#like-button[data-postid="${postId}"]`);
+    const likeCount = document.querySelector(`#like-count-${postId}`);
+
+    fetch(`/like/${postId}`)
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            if(data.is_liked) {
+                likeButton.innerHTML = '<i class="bi bi-hand-thumbs-up-fill"></i>';
+                likeCount.textContent = parseInt(likeCount.textContent) + 1;
+            } else {
+                likeButton.innerHTML = '<i class="bi bi-hand-thumbs-up"></i>';
+                likeCount.textContent = parseInt(likeCount.textContent) - 1;
+            }
+        }
+    });
+
+}

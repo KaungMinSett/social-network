@@ -100,7 +100,12 @@ def posts(request, postType):
     page_num = request.GET.get('page', 1)
     page = paginator.get_page(page_num)
      # Serialize the posts for current page
+    # liked_by_current_user = [post for post in page if request.user in post.likes.all()]
     serialized_posts = [post.serialize() for post in page]
+
+
+
+    
     
 
     
@@ -108,7 +113,8 @@ def posts(request, postType):
     data = {
         'posts': serialized_posts,
         'total_pages': paginator.num_pages,
-        'current_page': page.number
+        'current_page': page.number,
+
     }
 
     return JsonResponse(data)
@@ -162,5 +168,20 @@ def edit_post(request, postID):
             return JsonResponse({"error": "Post not found."}, status=404)
     else:
         return JsonResponse({"error": "You are not authorized to edit this post."}, status=403)
+    
+
+def like_post(request, postID):
+    post = Post.objects.get(id=postID)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return JsonResponse( {
+        'status': 'success',
+        'likes': post.likes.count(),
+        'is_liked': request.user in post.likes.all()
+    }
+
+    )
 
   

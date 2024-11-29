@@ -158,3 +158,16 @@ button:hover {
     justify-content: space-between;
     margin-top: 10px;
 }
+
+#like-button {
+    outline: none;
+    font-size: 1.5rem;
+
+
+    border:#28a745;
+    background-color: transparent;
+    color: #28a745;
+
+
+
+}
