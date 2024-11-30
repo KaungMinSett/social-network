@@ -34,8 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 setActiveLink(this);
             }
-            // For links that do navigate to new pages, let them handle naturally
-            // The active state will be set on page load
+           
         });
     });
 });
