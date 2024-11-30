@@ -48,12 +48,13 @@ class Post(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(User, related_name="liked_posts")
 
-    def serialize(self):
+    def serialize(self, current_user=None):
         return {
             "id": self.id,
             "user": self.user.username,
             "user_id": self.user.id,
             "content": self.content,
             "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
-            "likes": self.likes.count()
+            "likes": self.likes.count(),
+            "liked_by_current_user": current_user in self.likes.all() if current_user else False
         }

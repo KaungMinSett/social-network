@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -100,14 +101,8 @@ def posts(request, postType):
     page_num = request.GET.get('page', 1)
     page = paginator.get_page(page_num)
      # Serialize the posts for current page
-    # liked_by_current_user = [post for post in page if request.user in post.likes.all()]
-    serialized_posts = [post.serialize() for post in page]
 
-
-
-    
-    
-
+    serialized_posts = [post.serialize(current_user=request.user) for post in page]
     
 
     data = {
@@ -120,6 +115,7 @@ def posts(request, postType):
     return JsonResponse(data)
 
 
+@login_required(login_url='/login')
 def get_profile(request, userID):
     user = User.objects.get(id = userID)
     posts = user.posts.all().order_by("-timestamp")
@@ -133,10 +129,11 @@ def get_profile(request, userID):
         "posts_num": user.posts.count(),
         "is_current_user": is_current_user,
         "is_following": request.user.is_following(user),
-        "posts": [post.serialize() for post in posts]
+        "posts": [post.serialize(current_user=request.user) for post in posts]
     })  
 
 
+@login_required(login_url='/login')
 def follow(request, userID):
 
     user = User.objects.get(id=userID)
@@ -153,7 +150,7 @@ def follow(request, userID):
         })
     
 
-
+@login_required(login_url='/login')
 @csrf_exempt
 def edit_post(request, postID):
     if Post.objects.filter(id=postID, user=request.user).exists():
@@ -170,6 +167,7 @@ def edit_post(request, postID):
         return JsonResponse({"error": "You are not authorized to edit this post."}, status=403)
     
 
+@login_required(login_url='/login')
 def like_post(request, postID):
     post = Post.objects.get(id=postID)
     if request.user in post.likes.all():
